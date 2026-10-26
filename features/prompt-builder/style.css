@@ -1,0 +1,6 @@
+#preview {
+  margin: 0;
+  font: 400 0.875rem/1.6 var(--font-mono);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}

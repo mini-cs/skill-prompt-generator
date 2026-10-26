@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>개발자 프롬프트 생성기</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="css/base.css">
+  <script type="module" src="js/main.js"></script>
+</head>
+<body>
+  <div id="server-notice" role="alert">이 페이지는 로컬 서버로 열어야 해요. README의 실행 방법을 참고하세요.</div>
+
+  <header class="app-header">
+    <div class="header-title">
+      <h1>개발자 프롬프트 생성기</h1>
+      <span class="save-status" data-slot="save-status"></span>
+    </div>
+    <div class="header-actions">
+      <button type="button" class="btn btn-secondary" data-action="fill-example">예시로 채우기</button>
+      <button type="button" class="btn btn-secondary" data-action="reset">초기화</button>
+    </div>
+  </header>
+
+  <main>
+    <div id="scroll-sentinel"></div>
+    <div class="layout">
+      <form id="skill-form" novalidate>
+        <section class="panel" data-section="basic">
+          <h2 class="section-title">
+            <button type="button" class="section-toggle" data-section-toggle aria-expanded="true" aria-controls="body-basic">
+              <span>기본</span>
+              <span class="section-count" data-section-count></span>
+            </button>
+          </h2>
+          <div class="section-body" data-section-body id="body-basic" data-state="open">
+            <div class="field" data-field="idea">
+              <label class="field-label" for="f-idea">스킬 아이디어</label>
+              <textarea id="f-idea" name="idea" rows="3" placeholder="예: git diff를 분석해서 PR 리뷰 코멘트를 표로 정리"></textarea>
+              <p class="field-reason" data-disabled-reason hidden></p>
+              <p class="field-error" data-error-for="idea" id="error-idea" hidden></p>
+            </div>
+            <div class="field" data-field="platform" role="radiogroup" aria-labelledby="label-platform">
+              <span class="field-label" id="label-platform">대상 플랫폼</span>
+              <div class="choices">
+                <label class="choice"><input type="radio" name="platform" value="claude-code" checked> Claude Code</label>
+                <label class="choice"><input type="radio" name="platform" value="claude-ai"> claude.ai</label>
+                <label class="choice"><input type="radio" name="platform" value="both"> 둘 다 호환</label>
+              </div>
+              <p class="field-reason" data-disabled-reason hidden></p>
+              <p class="field-error" data-error-for="platform" id="error-platform" hidden></p>
+            </div>
+            <div class="field" data-field="skillName">
+              <label class="field-label" for="f-skillName">스킬 이름 후보 (선택)</label>
+              <input id="f-skillName" name="skillName" type="text" placeholder="예: pr-review" autocomplete="off" spellcheck="false">
+              <p class="field-help">비워두면 Claude가 제안해요</p>
+              <p class="field-reason" data-disabled-reason hidden></p>
+              <p class="field-error" data-error-for="skillName" id="error-skillName" hidden></p>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" data-section="behavior">
+          <h2 class="section-title">
+            <button type="button" class="section-toggle" data-section-toggle aria-expanded="false" aria-controls="body-behavior">
+              <span>동작</span>
+              <span class="section-count" data-section-count></span>
+            </button>
+          </h2>
+          <div class="section-body" data-section-body id="body-behavior" data-state="closed" hidden>
+            <div class="field" data-field="invocation" role="radiogroup" aria-labelledby="label-invocation">
+              <span class="field-label" id="label-invocation">호출 방식</span>
+              <div class="choices">
+                <label class="choice"><input type="radio" name="invocation" value="both" checked> 둘 다</label>
+                <label class="choice"><input type="radio" name="invocation" value="user-only"> 내가 /명령으로만</label>
+                <label class="choice"><input type="radio" name="invocation" value="model-only"> Claude가 자동으로만</label>
+              </div>
+              <p class="field-reason" data-disabled-reason hidden></p>
+              <p class="field-error" data-error-for="invocation" id="error-invocation" hidden></p>
+            </div>
+            <div class="field" data-field="triggers">
+              <label class="field-label" for="f-triggers">트리거 상황</label>
+              <textarea id="f-triggers" name="triggers" rows="3" placeholder="예: PR 리뷰해줘, 변경사항 정리해줘"></textarea>
+              <p class="field-counter" data-counter-for="triggers"></p>
+              <p class="field-reason" data-disabled-reason hidden></p>
+              <p class="field-error" data-error-for="triggers" id="error-triggers" hidden></p>
+            </div>
+            <div class="field" data-field="argMode" role="radiogroup" aria-labelledby="label-argMode">
+              <span class="field-label" id="label-argMode">인자</span>
+              <div class="choices">
+                <label class="choice"><input type="radio" name="argMode" value="none" checked> 없음</label>
+                <label class="choice"><input type="radio" name="argMode" value="whole"> 통째로 받기 ($ARGUMENTS)</label>
+                <label class="choice"><input type="radio" name="argMode" value="split"> 여러 개로 나눠 받기</label>
+              </div>
+              <p class="field-reason" data-disabled-reason hidden></p>
+              <p class="field-error" data-error-for="argMode" id="error-argMode" hidden></p>
+            </div>
+            <div class="field" data-field="argNames">
+              <label class="field-label" for="f-argNames">인자 이름 (쉼표로 구분)</label>
+              <input id="f-argNames" name="argNames" type="text" placeholder="예: 경로, 형식" autocomplete="off">
+              <p class="field-help" data-arg-map hidden></p>
+              <p class="field-reason" data-disabled-reason hidden></p>
+              <p class="field-error" data-error-for="argNames" id="error-argNames" hidden></p>
+            </div>
+            <div class="field" data-field="tools" role="group" aria-labelledby="label-tools">
+              <span class="field-label" id="label-tools">허용 도구</span>
+              <div class="choices">
+                <label class="choice"><input type="checkbox" name="tools" value="Read"> Read</label>
+                <label class="choice"><input type="checkbox" name="tools" value="Grep"> Grep</label>
+                <label class="choice"><input type="checkbox" name="tools" value="Glob"> Glob</label>
+                <label class="choice"><input type="checkbox" name="tools" value="Edit"> Edit</label>
+                <label class="choice"><input type="checkbox" name="tools" value="Write"> Write</label>
+              </div>
+              <p class="field-help">스킬을 호출한 그 턴에만 승인 없이 쓸 수 있어요. 목록에 없는 도구를 막지는 않아요.</p>
+              <p class="field-reason" data-disabled-reason hidden></p>
+              <p class="field-error" data-error-for="tools" id="error-tools" hidden></p>
+            </div>
+            <div class="field" data-field="bashPatterns">
+              <label class="field-label" for="f-bashPatterns">Bash 패턴 (쉼표로 구분)</label>
+              <input id="f-bashPatterns" name="bashPatterns" type="text" placeholder="예: Bash(git diff *)" autocomplete="off" spellcheck="false">
+              <p class="field-reason" data-disabled-reason hidden></p>
+              <p class="field-error" data-error-for="bashPatterns" id="error-bashPatterns" hidden></p>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" data-section="examples">
+          <h2 class="section-title">
+            <button type="button" class="section-toggle" data-section-toggle aria-expanded="false" aria-controls="body-examples">
+              <span>예시·금지사항</span>
+              <span class="section-count" data-section-count></span>
+            </button>
+          </h2>
+          <div class="section-body" data-section-body id="body-examples" data-state="closed" hidden>
+            <div class="field" data-field="inputExample">
+              <label class="field-label" for="f-inputExample">입력 예시</label>
+              <textarea id="f-inputExample" name="inputExample" rows="2" placeholder="예: /pr-review src/api" spellcheck="false"></textarea>
+              <p class="field-reason" data-disabled-reason hidden></p>
+              <p class="field-error" data-error-for="inputExample" id="error-inputExample" hidden></p>
+            </div>
+            <div class="field" data-field="outputExample">
+              <label class="field-label" for="f-outputExample">기대 출력 예시</label>
+              <textarea id="f-outputExample" name="outputExample" rows="4" placeholder="예: | 파일 | 줄 | 심각도 | 코멘트 | 표" spellcheck="false"></textarea>
+              <p class="field-reason" data-disabled-reason hidden></p>
+              <p class="field-error" data-error-for="outputExample" id="error-outputExample" hidden></p>
+            </div>
+            <div class="field" data-field="prohibitions">
+              <label class="field-label" for="f-prohibitions">금지사항 (한 줄에 하나)</label>
+              <textarea id="f-prohibitions" name="prohibitions" rows="3" placeholder="예: 코드 직접 수정 금지"></textarea>
+              <p class="field-reason" data-disabled-reason hidden></p>
+              <p class="field-error" data-error-for="prohibitions" id="error-prohibitions" hidden></p>
+            </div>
+            <div class="field" data-field="outputConstraints">
+              <label class="field-label" for="f-outputConstraints">출력 형식 제약 (한 줄에 하나)</label>
+              <textarea id="f-outputConstraints" name="outputConstraints" rows="3" placeholder="형용사 대신 구체 조건 — 예: 첫 줄에 총평 1문장, 항목 10개 이하"></textarea>
+              <p class="field-reason" data-disabled-reason hidden></p>
+              <p class="field-error" data-error-for="outputConstraints" id="error-outputConstraints" hidden></p>
+            </div>
+          </div>
+        </section>
+      </form>
+
+      <aside class="panel preview-panel" aria-labelledby="preview-title">
+        <h2 class="section-title" id="preview-title">프롬프트 미리보기</h2>
+        <pre id="preview" tabindex="0"></pre>
+        <p class="copy-hint" data-slot="copy-hint" hidden></p>
+        <button type="button" class="btn btn-primary" data-action="copy">프롬프트 복사</button>
+      </aside>
+    </div>
+  </main>
+
+  <div class="bottom-bar">
+    <span class="blocking-count" data-slot="blocking-count"></span>
+    <button type="button" class="btn btn-primary" data-action="copy">프롬프트 복사</button>
+  </div>
+
+  <div id="toast-region" aria-live="polite"></div>
+</body>
+</html>

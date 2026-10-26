@@ -34,7 +34,10 @@ function specBlock(form, r, hasArgs, allowed) {
   };
   const code = (label, value) => {
     const v = value.replace(/\r\n/g, '\n').replace(/^\s*\n/, '').trimEnd();
-    if (v.trim()) lines.push(`- ${label}:`, '```', v, '```');
+    if (!v.trim()) return;
+    // 값 속 백틱 연속보다 긴 펜스여야 바깥 코드 블록이 중간에 닫히지 않는다
+    const fence = '`'.repeat(Math.max(3, ...(v.match(/`+/g) ?? []).map((run) => run.length + 1)));
+    lines.push(`- ${label}:`, fence, v, fence);
   };
   const list = (label, value) => {
     const items = parseLines(value);
@@ -61,9 +64,15 @@ function specBlock(form, r, hasArgs, allowed) {
   return lines.join('\n');
 }
 
-function outputBlock(p, r) {
+function outputBlock(form, r) {
+  const p = form.platform;
   const install = p === 'both' ? [r.INSTALL['claude-code'], r.INSTALL['claude-ai']] : [r.INSTALL[p]];
-  const tests = p === 'claude-ai' ? [r.TEST_TRIGGERS, r.TEST_FRESH] : [r.TEST_SLASH, r.TEST_TRIGGERS, r.TEST_FRESH];
+  // F7: user-only면 자동 호출이 없고, model-only면 `/` 호출이 없다
+  const invocation = isActive('invocation', form) ? form.invocation : 'both';
+  const tests = [];
+  if (p !== 'claude-ai' && invocation !== 'model-only') tests.push(r.TEST_SLASH);
+  if (invocation !== 'user-only') tests.push(r.TEST_TRIGGERS);
+  tests.push(r.TEST_FRESH);
   return [r.OUTPUT_HEAD, r.OUTPUT_1, r.OUTPUT_2, r.OUTPUT_3, ...install.map(item), r.OUTPUT_4, ...tests.map(item), r.SELF_CHECK(p)].join('\n');
 }
 
@@ -75,6 +84,6 @@ export function buildPrompt(form, rules) {
     rules.TASK,
     rulesBlock(form, rules, hasArgs, allowed),
     specBlock(form, rules, hasArgs, allowed),
-    outputBlock(form.platform, rules),
+    outputBlock(form, rules),
   ].join('\n\n');
 }

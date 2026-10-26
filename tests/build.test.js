@@ -87,3 +87,21 @@ test('예시 데이터의 완성 프롬프트가 고정본과 글자 하나까�
   const expected = await readFile(new URL('./fixtures/example-prompt.txt', import.meta.url), 'utf8');
   assert.equal(buildPrompt({ ...EXAMPLE_FORM }, rules), expected.trimEnd());
 });
+
+test('테스트 안내는 호출 방식과 어긋나지 않는다 (F7)', () => {
+  const userOnly = build({ invocation: 'user-only' });
+  assert.ok(userOnly.includes(rules.TEST_SLASH));
+  assert.ok(!userOnly.includes(rules.TEST_TRIGGERS));
+  const modelOnly = build({ invocation: 'model-only' });
+  assert.ok(!modelOnly.includes(rules.TEST_SLASH));
+  assert.ok(modelOnly.includes(rules.TEST_TRIGGERS));
+  // 비활성인 호출 방식 값은 테스트 안내에도 영향을 주지 않는다
+  assert.ok(build({ platform: 'claude-ai', invocation: 'user-only' }).includes(rules.TEST_TRIGGERS));
+  const both = build({ platform: 'both', invocation: 'model-only' });
+  assert.ok(both.includes(rules.TEST_SLASH) && both.includes(rules.TEST_TRIGGERS));
+});
+
+test('예시 속 백틱 펜스보다 긴 펜스로 감싸 구조가 깨지지 않는다', () => {
+  const p = build({ outputExample: '```js\nx()\n```' });
+  assert.ok(p.includes('- 기대 출력 예시:\n````\n```js\nx()\n```\n````\n- 금지사항:'));
+});

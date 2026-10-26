@@ -9,6 +9,10 @@ Claude Skill 아이디어와 조건을 폼에 입력하면, SKILL.md 설계를 �
 
 `index.html`을 더블클릭해서(`file://`) 열면 동작하지 않습니다. 브라우저가 파일 주소에서는 ES 모듈을 불러오지 않기 때문입니다.
 
+## 배포 (Netlify)
+
+GitHub 저장소를 Netlify에 연결하면 `main`에 push할 때마다 배포됩니다. 빌드 명령은 비워두고, 배포 폴더는 루트(`.`)입니다. 설정은 `netlify.toml`에 있고, 개발 문서(`docs/`, `tests/`, `CLAUDE.md`, `.claude/`, `package.json`)는 배포된 사이트에서 404로 숨깁니다.
+
 ## 테스트
 
 ```bash

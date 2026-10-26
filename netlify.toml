@@ -1,0 +1,34 @@
+# 정적 사이트라 빌드 단계 없이 프로젝트 루트를 그대로 배포한다
+[build]
+  publish = "."
+
+# 개발 문서·테스트는 저장소에서만 보이고 배포된 사이트에서는 404로 숨긴다
+[[redirects]]
+  from = "/docs/*"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/tests/*"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/.claude/*"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/CLAUDE.md"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/package.json"
+  to = "/404"
+  status = 404
+  force = true

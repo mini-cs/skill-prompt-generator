@@ -1,0 +1,7 @@
+.field-counter {
+  color: var(--color-text-secondary);
+}
+
+.field-counter.is-over {
+  color: var(--color-warning);
+}

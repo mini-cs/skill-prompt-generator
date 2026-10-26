@@ -1,0 +1,23 @@
+/* 문서 맨 위 1px에 두어 1px만 스크롤돼도 내용이 바 아래로 들어갔음을 알 수 있게 */
+#scroll-sentinel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  pointer-events: none;
+}
+
+.app-header::after {
+  content: "";
+  position: absolute;
+  inset: 100% 0 auto 0;
+  height: 1px;
+  box-shadow: 0 1px 0 var(--color-separator), 0 2px 8px rgba(0, 0, 0, 0.06);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-fast) var(--ease-out);
+}
+
+.app-header.is-scrolled::after {
+  opacity: 1;
+}

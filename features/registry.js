@@ -4,4 +4,6 @@ export const features = [
   { name: 'arg-map', load: () => import('./arg-map/index.js'), css: false },
   { name: 'char-counter', load: () => import('./char-counter/index.js'), css: true },
   { name: 'prompt-builder', load: () => import('./prompt-builder/index.js'), css: true },
+  { name: 'sections', load: () => import('./sections/index.js'), css: true },
+  { name: 'scroll-edge', load: () => import('./scroll-edge/index.js'), css: true },
 ];

@@ -1,0 +1,14 @@
+.is-disabled input,
+.is-disabled textarea,
+.is-disabled .choice {
+  opacity: 0.45;
+}
+
+.is-disabled .choice {
+  cursor: not-allowed;
+}
+
+.field-reason {
+  color: var(--color-text-secondary);
+  font-size: 0.8125rem;
+}

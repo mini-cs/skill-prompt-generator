@@ -6,4 +6,6 @@ export const features = [
   { name: 'prompt-builder', load: () => import('./prompt-builder/index.js'), css: true },
   { name: 'sections', load: () => import('./sections/index.js'), css: true },
   { name: 'scroll-edge', load: () => import('./scroll-edge/index.js'), css: true },
+  { name: 'toast', load: () => import('./toast/index.js'), css: true },
+  { name: 'example-fill', load: () => import('./example-fill/index.js'), css: false },
 ];

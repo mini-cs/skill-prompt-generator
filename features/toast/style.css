@@ -1,0 +1,57 @@
+#toast-region {
+  position: fixed;
+  left: 50%;
+  bottom: var(--space-5);
+  z-index: 20;
+  width: min(28rem, 100% - 2rem);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+/* 두 열일 때는 폼 열 아래에 둬서 미리보기의 [프롬프트 복사]를 가리지 않게 */
+@media (min-width: 900px) {
+  #toast-region {
+    left: max(var(--space-4), (100vw - 72rem) / 2 + var(--space-4));
+    width: min(28rem, (min(100vw, 72rem) - 3.5rem) / 2);
+    transform: none;
+  }
+}
+
+@media (max-width: 899px) {
+  #toast-region {
+    bottom: calc(var(--bottom-bar-height) + var(--space-3) + env(safe-area-inset-bottom));
+  }
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-2) var(--space-2) var(--space-4);
+  border: 1px solid var(--color-separator);
+  border-radius: var(--radius-control);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-panel);
+  pointer-events: auto;
+  transition: opacity var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out);
+}
+
+.toast > span {
+  padding-block: var(--space-2);
+}
+
+.toast[data-state="closed"] {
+  opacity: 0;
+  transform: translateY(100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast {
+    transition: opacity var(--dur-fast) var(--ease-out);
+  }
+
+  .toast[data-state="closed"] {
+    transform: none;
+  }
+}

@@ -8,4 +8,5 @@ export const features = [
   { name: 'scroll-edge', load: () => import('./scroll-edge/index.js'), css: true },
   { name: 'toast', load: () => import('./toast/index.js'), css: true },
   { name: 'example-fill', load: () => import('./example-fill/index.js'), css: false },
+  { name: 'copy', load: () => import('./copy/index.js'), css: true },
 ];

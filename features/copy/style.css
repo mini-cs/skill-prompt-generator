@@ -1,0 +1,16 @@
+.btn.is-copied {
+  background: var(--color-success);
+}
+
+.copy-hint {
+  color: var(--color-text-secondary);
+  font-size: 0.8125rem;
+}
+
+.bottom-bar {
+  justify-content: space-between;
+}
+
+.bottom-bar .blocking-count {
+  margin-right: auto;
+}

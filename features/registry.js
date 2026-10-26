@@ -9,4 +9,5 @@ export const features = [
   { name: 'toast', load: () => import('./toast/index.js'), css: true },
   { name: 'example-fill', load: () => import('./example-fill/index.js'), css: false },
   { name: 'copy', load: () => import('./copy/index.js'), css: true },
+  { name: 'autosave', load: () => import('./autosave/index.js'), css: false },
 ];
